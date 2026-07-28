@@ -80,6 +80,7 @@ Groups collaborating on a shared set of tasks: friends planning a trip, roommate
 - **Version history & restore** — view a card's past edits and roll back to an earlier version, guarded by a version-number concurrency check so a restore can't silently clobber a concurrent edit.
 - **Image & video attachments on cards** — upload media to a card instead of plain text only, stored in Firebase Storage with a reference on the card document.
 - **Card metadata: due dates and assignee(s)** — additional fields on the card document beyond title/description, opening the door to derived features like overdue badges or per-person workload counts later.
+- **Testing & monitoring** — automated test coverage (unit tests for concurrency-critical logic like fractional-index generation and transaction retry behavior, plus Firestore security-rules tests) and production error/performance monitoring (e.g. Sentry) once there's real usage to observe.
 
 ## 11. Definition of done (portfolio criteria)
 
