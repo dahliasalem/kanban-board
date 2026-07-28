@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "dev": "kanban-board-dahlia",
+    "staging": "kanban-board-staging",
+    "prod": "kanban-board-prod"
+  }
+}

@@ -2,7 +2,14 @@
 
 A real-time, multi-user Kanban board — create boards, organize work into columns and cards, and collaborate live with the people you invite. Built on Next.js, React, TypeScript, Firebase, and Tailwind.
 
-This repo currently holds planning documentation only — no application code yet.
+## Getting started
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ## Docs
 
@@ -12,8 +19,10 @@ This repo currently holds planning documentation only — no application code ye
 - [`docs/user-flow.html`](./docs/user-flow.html) — product/UX user-flow diagrams.
 - [`docs/ui-wireframes.html`](./docs/ui-wireframes.html) — low-fidelity screen wireframes.
 
-## Branches
+## Environments
 
-- `main` — stable/deployable.
-- `staging` — pre-production integration.
-- `dev` — active development.
+| Env | Firebase project | Branch |
+|---|---|---|
+| dev | `kanban-board-dahlia` | `dev` |
+| staging | `kanban-board-staging` | `staging` |
+| prod | `kanban-board-prod` | `main` |
