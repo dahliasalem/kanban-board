@@ -1,0 +1,439 @@
+<title>Kanban Board — Architecture</title>
+<style>
+  :root {
+    --bg: #F4F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F8;
+    --ink: #161B26;
+    --ink-muted: #5B6478;
+    --ink-faint: #8890A3;
+    --accent: #3654E0;
+    --accent-soft: #E4E9FC;
+    --accent-ink: #2540B8;
+    --line: #DCE1EC;
+    --good: #1E8A5F;
+    --good-soft: #DEF3EA;
+    --warn: #A8710A;
+    --warn-soft: #FBEACE;
+    --shadow: 0 1px 2px rgba(22, 27, 38, 0.04), 0 8px 24px -12px rgba(22, 27, 38, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10131B;
+      --surface: #171B26;
+      --surface-2: #1E2333;
+      --ink: #E8EAF2;
+      --ink-muted: #9099B0;
+      --ink-faint: #6B7387;
+      --accent: #8CA0FF;
+      --accent-soft: #232B47;
+      --accent-ink: #B7C4FF;
+      --line: #262C3D;
+      --good: #4FBE8B;
+      --good-soft: #16302A;
+      --warn: #E0A63C;
+      --warn-soft: #362A14;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10131B;
+    --surface: #171B26;
+    --surface-2: #1E2333;
+    --ink: #E8EAF2;
+    --ink-muted: #9099B0;
+    --ink-faint: #6B7387;
+    --accent: #8CA0FF;
+    --accent-soft: #232B47;
+    --accent-ink: #B7C4FF;
+    --line: #262C3D;
+    --good: #4FBE8B;
+    --good-soft: #16302A;
+    --warn: #E0A63C;
+    --warn-soft: #362A14;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  }
+  :root[data-theme="light"] {
+    --bg: #F4F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F8;
+    --ink: #161B26;
+    --ink-muted: #5B6478;
+    --ink-faint: #8890A3;
+    --accent: #3654E0;
+    --accent-soft: #E4E9FC;
+    --accent-ink: #2540B8;
+    --line: #DCE1EC;
+    --good: #1E8A5F;
+    --good-soft: #DEF3EA;
+    --warn: #A8710A;
+    --warn-soft: #FBEACE;
+    --shadow: 0 1px 2px rgba(22, 27, 38, 0.04), 0 8px 24px -12px rgba(22, 27, 38, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 6rem;
+  }
+
+  header.top {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    margin-bottom: 1.1rem;
+  }
+
+  h1 {
+    font-size: 2.1rem;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.6rem;
+    text-wrap: balance;
+    font-weight: 700;
+  }
+
+  .lede {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  section.block {
+    margin-bottom: 3.5rem;
+  }
+
+  .block-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.35rem;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    padding: 0.22rem 0.55rem;
+    border-radius: 4px;
+    margin-bottom: 0.7rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.01em;
+  }
+
+  .caption {
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    max-width: 66ch;
+    margin: 0 0 1.1rem;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 1.4rem;
+    overflow-x: auto;
+  }
+
+  .panel pre.mermaid {
+    margin: 0;
+    min-width: 480px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    margin: 0.9rem 0 1.1rem;
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+  }
+
+  .legend span.dot {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 2px;
+    margin-right: 0.4rem;
+  }
+
+  .legend .crud .dot { background: var(--ink-faint); }
+  .legend .derived .dot { background: var(--accent); }
+
+  .legend .item {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  code.inline {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    background: var(--surface-2);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    color: var(--ink);
+  }
+
+  footer.note {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+    margin-top: 3rem;
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+</style>
+
+<div class="page">
+
+  <header class="top">
+    <span class="kicker">🗂️ Kanban board — reference</span>
+    <h1>Architecture &amp; data flow</h1>
+    <p class="lede">
+      Four diagrams covering the full design: the system's moving parts, the collections and how they relate,
+      and the two flows that tie everything together — moving a card, and inviting a collaborator.
+    </p>
+  </header>
+
+  <section class="block">
+    <div class="block-head">
+      <div>
+        <span class="tag">System</span>
+        <h2>Client, Firestore, and Cloud Functions</h2>
+      </div>
+    </div>
+    <p class="caption">
+      The client reads and writes <code class="inline">boards</code>, <code class="inline">columns</code>, and
+      <code class="inline">cards</code> directly against Firestore for real-time speed. Every card write also
+      appends a <code class="inline">version</code>, which triggers a function that formats it into the
+      activity feed; a separate trigger on <code class="inline">invites</code> sends email through an
+      external provider. A third, non-triggered API route proxies Unsplash searches so the API key never
+      reaches the browser.
+    </p>
+    <div class="panel">
+<pre class="mermaid">
+flowchart TB
+  subgraph Client["Next.js client"]
+    UI["Board UI"]
+    Cache["Local cache + onSnapshot listeners"]
+  end
+
+  subgraph FS["Firestore"]
+    Boards[("boards / columns / cards")]
+    Versions[("cards/*/versions")]
+    Feed[("activityFeed")]
+    Invites[("invites")]
+    Rules{{"Security rules"}}
+  end
+
+  subgraph Fns["Cloud Functions — triggered"]
+    FormatFn["Format activity entry"]
+    InviteFn["Send invite email"]
+  end
+
+  subgraph Api["Next.js API route — request/response"]
+    UnsplashRoute["/api/unsplash/search"]
+  end
+
+  subgraph Ext["External services"]
+    EmailAPI[["Email API"]]
+    UnsplashAPI[["Unsplash API"]]
+  end
+
+  UI -- "transaction write" --> Boards
+  UI -- "transaction write" --> Versions
+  UI -- "create invite" --> Invites
+  Boards -- "onSnapshot" --> Cache --> UI
+  Feed -- "onSnapshot" --> Cache
+
+  Rules -.guards.- Boards
+  Rules -.guards.- Versions
+  Rules -.guards.- Invites
+
+  Versions -- "onCreate" --> FormatFn --> Feed
+  Invites -- "onCreate" --> InviteFn --> EmailAPI --> Invitee["Invitee's inbox"]
+
+  UI -- "search query" --> UnsplashRoute -- "Access Key stays server-side" --> UnsplashAPI
+  UnsplashAPI -- "results" --> UnsplashRoute -- "results" --> UI
+  UI -- "set background (CRUD write)" --> Boards
+</pre>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <div>
+        <span class="tag">Data model</span>
+        <h2>Collections and what they store</h2>
+      </div>
+    </div>
+    <p class="caption">
+      Current board state is plain CRUD — cards hold live fields updated in place. History is derived: every
+      edit is logged as a version, and the activity feed is a materialized projection of that log, not a
+      separately maintained table.
+    </p>
+    <div class="legend">
+      <span class="item crud"><span class="dot"></span>CRUD — current state</span>
+      <span class="item derived"><span class="dot"></span>Derived — event log / projection</span>
+    </div>
+    <div class="panel">
+<pre class="mermaid">
+erDiagram
+  BOARD ||--o{ COLUMN : contains
+  COLUMN ||--o{ CARD : contains
+  CARD ||--o{ VERSION : "logged as"
+  BOARD ||--o{ ACTIVITY_FEED : "materialized from versions"
+  BOARD ||--o{ INVITE : sends
+  USER ||--o{ INVITE : "invited by"
+
+  BOARD {
+    string title
+    string ownerId
+  }
+  CARD {
+    string title
+    string column "current state"
+    string position "fractional index"
+  }
+  VERSION {
+    string field
+    string oldValue
+    string newValue
+    string editedBy
+    timestamp editedAt
+  }
+  ACTIVITY_FEED {
+    string message
+    timestamp createdAt
+  }
+  INVITE {
+    string email
+    string status "pending / accepted"
+  }
+</pre>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <div>
+        <span class="tag">Flow · card move</span>
+        <h2>Drag a card, feed updates live</h2>
+      </div>
+    </div>
+    <p class="caption">
+      The position write is optimistic-concurrency, not last-write-wins: if the card changed since it was read,
+      Firestore aborts the transaction and the SDK retries it automatically against fresh data.
+    </p>
+    <div class="panel">
+<pre class="mermaid">
+sequenceDiagram
+  actor U as User
+  participant C as Client
+  participant F as Firestore
+  participant Fn as Cloud Function
+  participant L as Other clients
+
+  U->>C: Drag card to new column
+  C->>C: Optimistic local update
+  C->>F: Transaction — update column + fractional position, append version
+  alt No conflicting write
+    F-->>C: Commit succeeds
+  else Card changed since read
+    F-->>C: Abort — SDK retries automatically
+    C->>F: Re-run transaction on fresh data
+    F-->>C: Commit succeeds
+  end
+  F->>Fn: onCreate(version) trigger
+  Fn->>Fn: Diff into a readable line
+  Fn->>F: Write entry to activityFeed
+  F-->>C: onSnapshot pushes board + feed update
+  F-->>L: onSnapshot pushes same update
+  C-->>U: Board and feed update instantly
+</pre>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <div>
+        <span class="tag">Flow · invite</span>
+        <h2>Inviting a collaborator by email</h2>
+      </div>
+    </div>
+    <p class="caption">
+      Every invite goes through email regardless of account status — new users get a signup link, existing
+      users get a lighter "shared with you" email that points back into the app.
+    </p>
+    <div class="panel">
+<pre class="mermaid">
+sequenceDiagram
+  actor U as Board owner
+  participant C as Client
+  participant F as Firestore
+  participant Fn as Cloud Function
+  participant E as Email API
+  actor I as Invitee
+
+  U->>C: Enter invitee's email, send invite
+  C->>F: Create invite doc — status: pending
+  F->>Fn: onCreate(invite) trigger
+  Fn->>F: Look up email against users
+  alt Existing user
+    Fn->>E: Send "shared with you" email
+  else New user
+    Fn->>E: Send "join the board" signup email
+  end
+  E-->>I: Email delivered
+  I->>C: Click join link
+  C->>F: Transaction — validate invite, add as board member
+  F-->>C: Real-time board access granted
+</pre>
+    </div>
+  </section>
+
+  <footer class="note">
+    Reference for the collaborative Kanban board design — pairs with <code class="inline">resume-app-ideas.md</code>.
+  </footer>
+
+</div>

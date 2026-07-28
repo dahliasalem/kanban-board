@@ -1,0 +1,290 @@
+<title>Kanban Board — User Flow</title>
+<style>
+  :root {
+    --bg: #F4F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F8;
+    --ink: #161B26;
+    --ink-muted: #5B6478;
+    --ink-faint: #8890A3;
+    --accent: #3654E0;
+    --accent-soft: #E4E9FC;
+    --accent-ink: #2540B8;
+    --line: #DCE1EC;
+    --shadow: 0 1px 2px rgba(22, 27, 38, 0.04), 0 8px 24px -12px rgba(22, 27, 38, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10131B;
+      --surface: #171B26;
+      --surface-2: #1E2333;
+      --ink: #E8EAF2;
+      --ink-muted: #9099B0;
+      --ink-faint: #6B7387;
+      --accent: #8CA0FF;
+      --accent-soft: #232B47;
+      --accent-ink: #B7C4FF;
+      --line: #262C3D;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10131B;
+    --surface: #171B26;
+    --surface-2: #1E2333;
+    --ink: #E8EAF2;
+    --ink-muted: #9099B0;
+    --ink-faint: #6B7387;
+    --accent: #8CA0FF;
+    --accent-soft: #232B47;
+    --accent-ink: #B7C4FF;
+    --line: #262C3D;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  }
+  :root[data-theme="light"] {
+    --bg: #F4F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F8;
+    --ink: #161B26;
+    --ink-muted: #5B6478;
+    --ink-faint: #8890A3;
+    --accent: #3654E0;
+    --accent-soft: #E4E9FC;
+    --accent-ink: #2540B8;
+    --line: #DCE1EC;
+    --shadow: 0 1px 2px rgba(22, 27, 38, 0.04), 0 8px 24px -12px rgba(22, 27, 38, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 6rem;
+  }
+
+  header.top {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    margin-bottom: 1.1rem;
+  }
+
+  h1 {
+    font-size: 2.1rem;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.6rem;
+    text-wrap: balance;
+    font-weight: 700;
+  }
+
+  .lede {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--ink-muted);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  section.block {
+    margin-bottom: 3.5rem;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    padding: 0.22rem 0.55rem;
+    border-radius: 4px;
+    margin-bottom: 0.7rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.01em;
+  }
+
+  .caption {
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    max-width: 66ch;
+    margin: 0 0 1.1rem;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 1.4rem;
+    overflow-x: auto;
+  }
+
+  .panel pre.mermaid {
+    margin: 0;
+    min-width: 480px;
+  }
+
+  .key {
+    display: flex;
+    gap: 1.4rem;
+    flex-wrap: wrap;
+    margin: 0.9rem 0 1.1rem;
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+  }
+
+  .key .item {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .key .swatch {
+    display: inline-block;
+    width: 1.4rem;
+    height: 0;
+    margin-right: 0.5rem;
+    border-top: 2px solid var(--ink-faint);
+  }
+
+  .key .dashed { border-top-style: dashed; }
+
+  code.inline {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    background: var(--surface-2);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    color: var(--ink);
+  }
+
+  footer.note {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+    margin-top: 3rem;
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+</style>
+
+<div class="page">
+
+  <header class="top">
+    <span class="kicker">🧭 Kanban board — reference</span>
+    <h1>User flow</h1>
+    <p class="lede">
+      How someone actually moves through the app — from first landing on it or an invite email, to the
+      day-to-day loop of using a shared board. Product/UX view, not the backend architecture (see the
+      companion architecture diagram for that).
+    </p>
+  </header>
+
+  <section class="block">
+    <div>
+      <span class="tag">Flow · getting onto a board</span>
+      <h2>Onboarding, sign-in, and invites</h2>
+    </div>
+    <p class="caption">
+      Two ways in: someone arrives cold and signs up themselves, or someone arrives via an invite email and
+      is dropped straight onto the board they were invited to — whether or not they already had an account.
+    </p>
+    <div class="panel">
+<pre class="mermaid">
+flowchart TD
+  Start(["Visit the app"]) --> HasInvite{"Arrived via an invite link?"}
+
+  HasInvite -- "No" --> AuthCheck{"Already signed in?"}
+  AuthCheck -- "No" --> Login["Sign up or log in"] --> Dashboard["Boards dashboard"]
+  AuthCheck -- "Yes" --> Dashboard
+
+  HasInvite -- "Yes" --> InviteAuthCheck{"Already signed in?"}
+  InviteAuthCheck -- "No — new user" --> Signup["Sign up, pre-filled from the invite"] --> JoinBoard["Added as a board member automatically"]
+  InviteAuthCheck -- "Yes — existing user" --> JoinBoard
+  JoinBoard --> BoardView["Lands directly on the shared board"]
+
+  Dashboard --> CreateOrOpen{"Create a new board, or open one?"}
+  CreateOrOpen -- "Create" --> NameBoard["Name it, add starting columns"] --> BoardView
+  CreateOrOpen -- "Open existing" --> BoardView
+</pre>
+    </div>
+  </section>
+
+  <section class="block">
+    <div>
+      <span class="tag">Flow · using a board</span>
+      <h2>The day-to-day loop</h2>
+    </div>
+    <p class="caption">
+      Once on a board, everything radiates out from the same screen — every action either updates the
+      board directly or opens a small, focused step that returns you right back to it.
+    </p>
+    <div class="key">
+      <span class="item"><span class="swatch"></span>user action</span>
+      <span class="item"><span class="swatch dashed"></span>returns to board view</span>
+    </div>
+    <div class="panel">
+<pre class="mermaid">
+flowchart TD
+  BoardView(["Board view — columns &amp; cards"])
+
+  BoardView --> Drag["Drag a card to a new column or position"]
+  Drag --> Sync["Update appears instantly for every collaborator"]
+  Sync -.-> BoardView
+
+  BoardView --> OpenCard["Open a card"]
+  OpenCard --> CardDetail["Edit title, description, assignee, due date"]
+  CardDetail -.-> BoardView
+
+  BoardView --> Feed["Open the activity feed"]
+  Feed --> SeeUpdates["See what collaborators changed recently"]
+  SeeUpdates -.-> BoardView
+
+  BoardView --> Invite["Invite a collaborator"]
+  Invite --> EnterEmail["Enter their email address"]
+  EnterEmail --> EmailSent["They receive an email — join link or 'shared with you'"]
+  EmailSent -.-> BoardView
+
+  BoardView --> Background["Change the board background"]
+  Background --> SearchUnsplash["Search Unsplash, pick a photo"]
+  SearchUnsplash -.-> BoardView
+</pre>
+    </div>
+  </section>
+
+  <footer class="note">
+    User-flow reference for the collaborative Kanban board — pairs with <code class="inline">kanban-prd.md</code>
+    and the architecture diagram artifact.
+  </footer>
+
+</div>
