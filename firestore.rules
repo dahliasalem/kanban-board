@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny — rules for boards/columns/cards/etc. will be added
+    // alongside the data model itself.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
