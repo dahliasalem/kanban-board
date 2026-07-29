@@ -48,3 +48,4 @@ firestore-debug.log
 
 # editor
 .vscode/
+.superdesign
