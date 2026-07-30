@@ -302,7 +302,7 @@ export function Sidebar({
 
   return (
     <aside
-      className={`flex flex-none flex-col overflow-hidden bg-[#f3edf7] transition-[width] duration-300 ease-in-out ${
+      className={`hidden flex-none flex-col overflow-hidden bg-[#f3edf7] transition-[width] duration-300 ease-in-out md:flex ${
         collapsed ? "w-16" : "w-72"
       }`}
     >
