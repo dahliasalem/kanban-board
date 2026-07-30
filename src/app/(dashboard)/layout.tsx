@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { MobileNav } from "@/components/MobileNav";
 import { Sidebar } from "@/components/Sidebar";
 
 export default function DashboardLayout({
@@ -25,7 +26,8 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex flex-1 bg-[#fffbfe]">
+    <div className="flex flex-1 flex-col bg-[#fffbfe] md:flex-row">
+      <MobileNav />
       <Sidebar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
