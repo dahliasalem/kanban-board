@@ -1,0 +1,16 @@
+---
+title: "Environments"
+description: "How dev / staging / prod map to Firebase projects and branches"
+---
+
+| Env | Firebase project | Branch |
+|---|---|---|
+| dev | `kanban-board-dahlia` | `dev` |
+| staging | `kanban-board-staging` | `staging` |
+| prod | `kanban-board-prod` | `main` |
+
+Each Firebase project has its own Authentication config, Firestore instance, and Cloud Functions deployment — kept fully isolated so schema or security-rule changes can be tested in `dev`/`staging` before reaching `prod`.
+
+<Note>
+  The app itself deploys via Vercel, with each git branch mapped to the matching Vercel environment and pointed at the matching Firebase project's client config through environment variables.
+</Note>

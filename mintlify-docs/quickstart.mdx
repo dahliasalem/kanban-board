@@ -1,0 +1,53 @@
+---
+title: "Quickstart"
+description: "Run the Kanban Board app locally"
+---
+
+<Steps>
+  <Step title="Install dependencies">
+    ```bash
+    npm install
+    ```
+  </Step>
+  <Step title="Set up environment variables">
+    Copy the example env file and fill in your Firebase project's web SDK config from **Firebase Console → Project settings → Your apps**.
+
+    ```bash
+    cp .env.local.example .env.local
+    ```
+
+    <ParamField path="NEXT_PUBLIC_FIREBASE_API_KEY" type="string" required>
+      Firebase web API key.
+    </ParamField>
+    <ParamField path="NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN" type="string" required>
+      Usually `<project-id>.firebaseapp.com`.
+    </ParamField>
+    <ParamField path="NEXT_PUBLIC_FIREBASE_PROJECT_ID" type="string" required />
+    <ParamField path="NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET" type="string" required />
+    <ParamField path="NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID" type="string" required />
+    <ParamField path="NEXT_PUBLIC_FIREBASE_APP_ID" type="string" required />
+  </Step>
+  <Step title="Start the dev server">
+    ```bash
+    npm run dev
+    ```
+
+    Open [http://localhost:3000](http://localhost:3000).
+  </Step>
+</Steps>
+
+## Other commands
+
+<CodeGroup>
+```bash Build
+npm run build
+```
+
+```bash Lint
+npm run lint
+```
+</CodeGroup>
+
+<Tip>
+  See [Environments](/architecture/environments) for how `dev` / `staging` / `prod` map to separate Firebase projects and git branches.
+</Tip>

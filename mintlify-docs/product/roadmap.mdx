@@ -1,0 +1,30 @@
+---
+title: "Roadmap"
+description: "Open questions, stretch goals, and planned enhancements"
+---
+
+## Not yet scoped
+
+<Accordion title="Presence (who's currently viewing/editing a board)">
+  Likely needs Firebase Realtime Database alongside Firestore for ephemeral, high-frequency state — Firestore is a poor fit for presence pings. Not yet scoped in detail.
+</Accordion>
+
+## Planned enhancements
+
+<Steps>
+  <Step title="Cross-board / global search">
+    Search for cards across every board you're a member of. Firestore has no native full-text search, so a real version needs a dedicated search service (Algolia/Typesense) rather than per-board client-side filtering.
+  </Step>
+  <Step title="Version history & restore">
+    View a card's past edits and roll back to an earlier version, guarded by a version-number concurrency check so a restore can't silently clobber a concurrent edit.
+  </Step>
+  <Step title="Image & video attachments">
+    Upload media to a card, stored in Firebase Storage with a reference on the card document.
+  </Step>
+  <Step title="Card metadata: due dates and assignees">
+    Opens the door to derived features like overdue badges or per-person workload counts later.
+  </Step>
+  <Step title="Testing & monitoring">
+    Unit tests for concurrency-critical logic (fractional-index generation, transaction retry behavior), Firestore security-rules tests, and production error/performance monitoring once there's real usage.
+  </Step>
+</Steps>

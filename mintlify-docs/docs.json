@@ -1,0 +1,88 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Kanban Board Docs",
+  "description": "Internal docs for the real-time, multi-user Kanban board project — product requirements and technical architecture.",
+  "colors": {
+    "primary": "#6750a4",
+    "light": "#e8def8",
+    "dark": "#4a3780"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["index", "quickstart"]
+          },
+          {
+            "group": "Product",
+            "pages": ["product/overview", "product/roadmap"]
+          },
+          {
+            "group": "Architecture",
+            "pages": [
+              "architecture/data-model",
+              "architecture/concurrency",
+              "architecture/security",
+              "architecture/environments"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "icon": "square-terminal",
+        "groups": [
+          {
+            "group": "API Reference",
+            "openapi": "openapi.json"
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Mintlify docs",
+          "href": "https://mintlify.com/docs",
+          "icon": "book-open-cover"
+        },
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/dahliasalem/kanban-board",
+          "icon": "github"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/dahliasalem/kanban-board"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Open App",
+      "href": "http://localhost:3000"
+    }
+  },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude", "mcp"]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/dahliasalem"
+    }
+  }
+}
