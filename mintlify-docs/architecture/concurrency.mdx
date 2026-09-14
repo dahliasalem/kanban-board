@@ -1,0 +1,39 @@
+---
+title: "Concurrency design"
+description: "How simultaneous card moves are resolved without data loss"
+---
+
+## Card move (drag-and-drop)
+
+Wrapped in a Firestore transaction — this is **optimistic concurrency**, not last-write-wins.
+
+<Steps>
+  <Step title="Read neighbors">
+    The transaction reads the two neighboring cards' `position` values in the destination column.
+  </Step>
+  <Step title="Compute a new rank">
+    A new rank string is generated between them using the `fractional-indexing` library's `generateKeyBetween`, avoiding a renumber of the whole column.
+  </Step>
+  <Step title="Write atomically">
+    The moved card's `columnId` + `position` are written, and a `CardVersion` is appended — all in the same transaction.
+  </Step>
+  <Step title="Retry on conflict">
+    If either neighbor changed since being read, Firestore aborts the transaction and the SDK automatically retries the callback against fresh data.
+  </Step>
+</Steps>
+
+<Check>
+  A losing write re-runs its logic against current state rather than silently overwriting, or being silently overwritten by, a concurrent move.
+</Check>
+
+## Optimistic UI
+
+During a drag, the UI applies the move optimistically before the transaction resolves, then reconciles with the confirmed write using `snapshot.metadata.hasPendingWrites`.
+
+<Warning>
+  Combining an equality filter (e.g. `where("columnId", "==", ...)`) with `orderBy("position")` on a different field requires a Firestore **composite index**, provisioned ahead of time — it is not automatic.
+</Warning>
+
+## Version restore (planned)
+
+Guarded the same way: a version-number check ensures a restore can't clobber a concurrent edit made after the version list was loaded. See [Roadmap](/product/roadmap).

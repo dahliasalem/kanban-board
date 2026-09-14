@@ -1,0 +1,58 @@
+---
+title: "Product overview"
+description: "Goals, target users, and MVP scope"
+---
+
+## Target users
+
+Groups collaborating on a shared set of tasks: friends planning a trip, roommates splitting chores, a project team, a study group.
+
+## Core user stories
+
+<Tabs>
+  <Tab title="Board owner">
+    - Create a board and invite collaborators by email so they can join and start contributing, whether or not they already use the app.
+    - Set a background image for the board by searching Unsplash.
+  </Tab>
+  <Tab title="Collaborator">
+    - See the board update live as others move or edit cards, with no refresh needed.
+    - Drag a card to a new column or position and have it land correctly even if someone else is moving a card in the same column at the same moment.
+    - See a feed of recent activity on the board.
+  </Tab>
+</Tabs>
+
+## MVP scope
+
+<AccordionGroup>
+  <Accordion title="Boards, columns, cards" icon="table-columns">
+    Create/read/update/delete boards, columns, and cards. Cards support title and description only for now.
+  </Accordion>
+  <Accordion title="Real-time collaboration" icon="bolt">
+    All board/column/card changes sync live via Firestore `onSnapshot` listeners. Card reordering uses fractional indexing so a single move writes one document. Position/column writes happen inside a Firestore transaction — see [Concurrency design](/architecture/concurrency).
+  </Accordion>
+  <Accordion title="Activity feed" icon="clock-rotate-left">
+    Every card edit appends an immutable version record. A Firestore-triggered Cloud Function formats each new version into a readable line in a materialized `activityFeed` collection, read via a real-time listener.
+  </Accordion>
+  <Accordion title="Invites & onboarding" icon="envelope">
+    Board owner invites a collaborator by email. Every invite triggers a transactional email — new users get a signup link, existing users get a "shared with you" link. Invite status is tracked as `pending` / `accepted` / `expired`.
+  </Accordion>
+  <Accordion title="Board customization" icon="image">
+    Board owner searches Unsplash and sets a board background via a Next.js API route that proxies the request server-side, so the Unsplash Access Key is never exposed to the client. See the [API Reference](/api-reference/search-unsplash-for-board-background-images).
+  </Accordion>
+</AccordionGroup>
+
+## Deliberately out of scope
+
+<Warning>
+  Every deferred feature below maps to a specific, explainable reason it was cut — not just "not built yet."
+</Warning>
+
+| Feature | Why it's cut |
+|---|---|
+| WIP limits, cycle-time analytics, card aging | Process-discipline features that assume a team has adopted a formal, audited workflow — this app's collaboration model doesn't call for enforcing one. |
+| Whole-board time travel / snapshots | Would require reconstructing consistent state across every card at once from the event log — a meaningfully bigger lift than single-card history restore. |
+| Push notifications | Cut in favor of the invite-email channel plus the in-app activity feed, avoiding service-worker/token-management infrastructure not central to the demo. |
+
+## Definition of done
+
+Demonstrable live with two accounts in two windows: real-time sync, a concurrent-drag scenario that doesn't lose data, an activity feed update, an invite email arriving, and a board with an Unsplash background.

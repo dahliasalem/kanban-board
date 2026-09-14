@@ -1,0 +1,38 @@
+---
+title: "Introduction"
+description: "A real-time, multi-user Kanban board — boards, columns, cards, live collaboration."
+---
+
+Kanban Board is a real-time, multi-user task board: create boards, organize work into columns and cards, and collaborate live with the people you invite. Built on Next.js, React, TypeScript, and Firebase.
+
+It's built with two equally load-bearing goals:
+
+<CardGroup cols={2}>
+  <Card title="Genuinely useful" icon="users">
+    A shared task board for real collaborators — friends, roommates, small project teams — usable without onboarding friction.
+  </Card>
+  <Card title="A portfolio piece" icon="sparkles">
+    Demonstrates production-grade engineering judgment: concurrency correctness, derived vs. current state, and deliberate use of external APIs.
+  </Card>
+</CardGroup>
+
+## Where to start
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Run the app locally against a Firebase project.
+  </Card>
+  <Card title="Product overview" icon="clipboard-list" href="/product/overview">
+    Goals, user stories, and MVP scope.
+  </Card>
+  <Card title="Data model" icon="database" href="/architecture/data-model">
+    The Firestore schema and why collections are nested under boards.
+  </Card>
+  <Card title="Concurrency design" icon="git-merge" href="/architecture/concurrency">
+    How simultaneous card moves are resolved without data loss.
+  </Card>
+</CardGroup>
+
+<Note>
+  This docs site itself is a Mintlify experiment — the goal was to convert this project's existing PRD and engineering-design docs into a real Mintlify site to learn the platform's config format, components, and API-reference workflow hands-on.
+</Note>

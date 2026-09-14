@@ -1,0 +1,44 @@
+---
+title: "Security & secrets"
+description: "Firestore security rules and where secrets live"
+---
+
+## Firestore security rules
+
+All board-scoped collections check membership against the parent board's `memberIds`, inherited down the subtree:
+
+```
+match /boards/{boardId} {
+  allow read, write: if request.auth.uid in resource.data.memberIds;
+
+  match /{subcollection=**} {
+    allow read, write: if request.auth.uid in
+      get(/databases/$(database)/documents/boards/$(boardId)).data.memberIds;
+  }
+}
+```
+
+<Info>
+  `users/{uid}` is readable by any authenticated user (needed for the invite Cloud Function's email lookup) but writable only by its own owner.
+</Info>
+
+## Secrets
+
+<Warning>
+  Rule of thumb: a key is server-side-only if possessing it alone lets someone do something costly or harmful with no other check in place.
+</Warning>
+
+| Secret | Lives in | Why |
+|---|---|---|
+| Firebase client config (`apiKey`, etc.) | Client bundle | Not treated as a secret — access is enforced by security rules, not by hiding the config. |
+| Unsplash Access Key | Next.js API route env var (server-side) | A Next.js API route (`/api/unsplash/search`) proxies the search request so the key never reaches the browser. |
+| Transactional email API key | Cloud Functions secrets/config | Used only inside the invite-triggered Cloud Function. |
+
+<Tabs>
+  <Tab title="Local">
+    `.env.local` (gitignored): `UNSPLASH_ACCESS_KEY`, email provider API key, Firebase client config.
+  </Tab>
+  <Tab title="Production">
+    Cloud Functions secrets/config for the email API key; hosting platform env vars (Vercel) for the Unsplash key used by the Next.js API route.
+  </Tab>
+</Tabs>
